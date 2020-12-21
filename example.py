@@ -97,7 +97,8 @@ if not controller.connect():
 print("Controller connected")
 print("Player Port: " + str(args.opponent))
 costume = 0
-numtecs = [0,0,0] #Left, Right, Normal respectively
+numtecs = [0.0,0.0,0.0] #Left, Right, Normal respectively
+numsuccess = [0.0,0.0,0.0]
 inTech = False
 teching = True
 shouldSpotdoge = 3
@@ -147,6 +148,7 @@ while True:
                 elif ai_state.action_frame > 2:
                     shouldSpotdoge = 3
                     print("Sucsess")
+                    numsuccess[0] += 1
             elif shouldSpotdoge == 1:
                 if ai_state.action != enums.Action.SPOTDODGE:
                     if currentPercent == ai_state.percent:
@@ -158,6 +160,7 @@ while True:
                 elif ai_state.action_frame > 2:
                     shouldSpotdoge = 3
                     print("Sucsess")
+                    numsuccess[1] += 1
             elif shouldSpotdoge == 2:
                 if ai_state.action != enums.Action.SPOTDODGE:
                     if currentPercent == ai_state.percent:
@@ -169,8 +172,9 @@ while True:
                 elif ai_state.action_frame > 2:
                     shouldSpotdoge = 3
                     print("Sucsess")
+                    numsuccess[2] += 1
             else:
-                teching = SimpleTech(ai_state, controller)
+                teching = SimpleTech(ai_state, controller, numtecs, numsuccess)
                 # if not teching:
                 #     simpleFoxAI(ai_state, controller, player_state)
 
