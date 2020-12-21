@@ -16,9 +16,9 @@ def shortHopLaser(ai_state, controller):
     if not ai_state.on_ground:
         controller.press_button(enums.Button.BUTTON_B)
         if ai_state.action_frame == 4:
-            controller.release_all()
+            controller.release_button(enums.Button.BUTTON_B)
     else:
-        controller.release_all()
+        controller.release_button(enums.Button.BUTTON_Y)
 
 
 def SDILeft(ai_state, controller):
@@ -101,28 +101,29 @@ def faceOpponent(ai_state, controller, player_state):
 
 def simpleFoxAI(ai_state, controller, player_state):
     if ai_state.on_ground:
-        if ai_state.facing and (ai_state.x > player_state.x):
-            #print("Facing right flip left")
-            controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.4,0.5)
-        elif not ai_state.facing and (ai_state.x < player_state.x):
-            #print("Facing left flip right")
-            controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.6,0.5)
-        else:
-            if ai_state.x < player_state.x:
-                SDIDownLeft(ai_state,controller)
+        if ai_state.facing:
+            if ai_state.x > player_state.x:
+                #print("Facing right flip left")
+                controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.4,0.5)
             else:
-                SDIDownRight(ai_state,controller)
-            shortHopLaser(ai_state,controller)
+                controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0.5)
+                #SDIDownLeft(ai_state,controller)
+                #shortHopLaser(ai_state,controller)
+        elif not ai_state.facing: 
+            if ai_state.x < player_state.x:
+                #print("Facing left flip right")
+                controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.6,0.5)
+            else:
+                controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0.5)
+                #SDIDownRight(ai_state,controller)
+                #shortHopLaser(ai_state, controller)
     else:
         if ai_state.x < player_state.x:
             SDIDownLeft(ai_state,controller)
         else:
             SDIDownRight(ai_state,controller)
-        shortHopLaser(ai_state,controller)
+        #shortHopLaser(ai_state,controller)
 
-
-    #else:
-        #controller.release_all()
 
 
 def PoorlyMadeTechplacement(ai_state, controller, stagePositiony):
@@ -144,11 +145,13 @@ def PoorlyMadeTechplacement(ai_state, controller, stagePositiony):
                 controller.release_button(enums.Button.BUTTON_L)
 
 def SimpleTech(ai_state, controller):
-    if ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and not ai_state.hitlag:
+    if (ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and not ai_state.hitlag and (ai_state.speed_y_self + ai_state.speed_y_attack) < -0.01):
         controller.release_all()
         controller.press_button(enums.Button.BUTTON_L)
+        return True
     else:
         controller.release_button(enums.Button.BUTTON_L)
+        return False
 
 # def ComboDILeft(ai_state, controller):
 #     if ai_state.action == enums.Action.THROWN_UP:
@@ -164,3 +167,8 @@ def SimpleTech(ai_state, controller):
 #             #return
 #     else:
 #         controller.release_all()
+
+
+# if (ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and 
+#         (not ai_state.hitlag or
+#         (ai_state.hitstun_frames_left == 1 and ai_state.action == enums.Action.TUMBLING))) :

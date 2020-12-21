@@ -98,7 +98,7 @@ print("Controller connected")
 print("Player Port: " + str(args.opponent))
 costume = 0
 stagePositiony = 16.1
-wasInAir = True
+teching = True
 # Main loop
 while True:
     # "step" to the next frame
@@ -158,10 +158,11 @@ while True:
 
             # if ai_state.action == enums.Action.THROWN_BACK:
             #     print("Got grabbed")
-            simpleFoxAI(ai_state, controller, player_state)
-            #SimpleTech(ai_state, controller)
+            
+            teching = SimpleTech(ai_state, controller)
+            if not teching:
+                simpleFoxAI(ai_state, controller, player_state)
               
-            #print(ai_state.action)
                 
                 
 
