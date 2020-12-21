@@ -210,94 +210,94 @@ def randomizeProbability(numtecs, numsuccess):
     return choice(3,p=probarray)
     
 
-# class RecordStates:
-#     def _init_(recorder, numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent):
-#         recorder.numtecs = numtecs
-#         recorder.numsuccess = numsuccess
-#         recorder.inTech = inTech
-#         recorder.teching = teching
-#         recorder.shouldSpotdoge = shouldSpotdoge
-#         recorder.currentPercent = currentPercent
+class RecordStates:
+    def __init__ (recorder, numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent):
+        recorder.numtecs = numtecs
+        recorder.numsuccess = numsuccess
+        recorder.inTech = inTech
+        recorder.teching = teching
+        recorder.shouldSpotdoge = shouldSpotdoge
+        recorder.currentPercent = currentPercent
 
-#     def recordTech(ai_state, controller, player_state):
-#         if shouldSpotdoge == 0:
-#                 if ai_state.action != enums.Action.SPOTDODGE:
-#                     if currentPercent == ai_state.percent:
-#                         controller.press_button(enums.Button.BUTTON_L)
-#                         controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
-#                     else:
-#                         shouldSpotdoge = 3
-#                         print("\nFAILURE TECHLEFT!!!!\n\n")
-#                 elif ai_state.action_frame > 2:
-#                     shouldSpotdoge = 3
-#                     print("Sucsess")
-#                     numsuccess[0] += 1
-#             elif shouldSpotdoge == 1:
-#                 if ai_state.action != enums.Action.SPOTDODGE:
-#                     if currentPercent == ai_state.percent:
-#                         controller.press_button(enums.Button.BUTTON_L)
-#                         controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
-#                     else:
-#                         shouldSpotdoge = 3
-#                         print("\nFAILURE TECHRIGHT!!!!\n\n")
-#                 elif ai_state.action_frame > 2:
-#                     shouldSpotdoge = 3
-#                     print("Sucsess")
-#                     numsuccess[1] += 1
-#             elif shouldSpotdoge == 2:
-#                 if ai_state.action != enums.Action.SPOTDODGE:
-#                     if currentPercent == ai_state.percent:
-#                         controller.press_button(enums.Button.BUTTON_L)
-#                         controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
-#                     else:
-#                         shouldSpotdoge = 3
-#                         print("\nFAILURE TECHNORMAL!!!!\n\n")
-#                 elif ai_state.action_frame > 2:
-#                     shouldSpotdoge = 3
-#                     print("Sucsess")
-#                     numsuccess[2] += 1
-#             else:
-#                 teching = SimpleTech(ai_state, controller, numtecs, numsuccess)
-#                 # if not teching:
-#                 #     simpleFoxAI(ai_state, controller, player_state)
-
-
+    def recordTech(recorder, ai_state, controller, player_state):
+        if recorder.shouldSpotdoge == 0:
+            if ai_state.action != enums.Action.SPOTDODGE:
+                if recorder.currentPercent == ai_state.percent:
+                    controller.press_button(enums.Button.BUTTON_L)
+                    controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
+                else:
+                    recorder.shouldSpotdoge = 3
+                    print("\nFAILURE TECHLEFT!!!!\n\n")
+            elif ai_state.action_frame > 2:
+                recorder.shouldSpotdoge = 3
+                print("Sucsess")
+                recorder.numsuccess[0] += 1
+        elif recorder.shouldSpotdoge == 1:
+            if ai_state.action != enums.Action.SPOTDODGE:
+                if recorder.currentPercent == ai_state.percent:
+                    controller.press_button(enums.Button.BUTTON_L)
+                    controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
+                else:
+                    recorder.shouldSpotdoge = 3
+                    print("\nFAILURE TECHRIGHT!!!!\n\n")
+            elif ai_state.action_frame > 2:
+                recorder.shouldSpotdoge = 3
+                print("Sucsess")
+                recorder.numsuccess[1] += 1
+        elif recorder.shouldSpotdoge == 2:
+            if ai_state.action != enums.Action.SPOTDODGE:
+                if recorder.currentPercent == ai_state.percent:
+                    controller.press_button(enums.Button.BUTTON_L)
+                    controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
+                else:
+                    recorder.shouldSpotdoge = 3
+                    print("\nFAILURE TECHNORMAL!!!!\n\n")
+            elif ai_state.action_frame > 2:
+                recorder.shouldSpotdoge = 3
+                print("Sucsess")
+                recorder.numsuccess[2] += 1
+        else:
+            recorder.teching = SimpleTech(ai_state, controller, recorder.numtecs, recorder.numsuccess)
+            if not recorder.teching:
+                simpleFoxAI(ai_state, controller, player_state)
 
 
 
-#             if(ai_state.action == enums.Action.NEUTRAL_TECH):
-#                 if ai_state.action_frame == 1:
-#                     currentPercent = ai_state.percent
-#                     numtecs[2] +=1
-#                     shouldSpotdoge = 2
-#                     print("Neutral Tech\n")
-#                     print(numtecs)
-#             if(ai_state.action == enums.Action.FORWARD_TECH):
-#                 if ai_state.facing:
-#                     if ai_state.action_frame == 1:
-#                         currentPercent = ai_state.percent
-#                         numtecs[1] +=1
-#                         shouldSpotdoge = 1
-#                         print("TechRight")
-#                 else:
-#                     if ai_state.action_frame == 1:
-#                         currentPercent = ai_state.percent
-#                         numtecs[0] +=1
-#                         shouldSpotdoge = 0
-#                         print("TechLeft")
-#             if(ai_state.action == enums.Action.BACKWARD_TECH):
-#                 if ai_state.facing:
-#                     if ai_state.action_frame == 1:
-#                         currentPercent = ai_state.percent
-#                         numtecs[0] +=1
-#                         shouldSpotdoge = 0
-#                         print("TechLeft")
-#                 else:
-#                     if ai_state.action_frame == 1:
-#                         currentPercent = ai_state.percent
-#                         numtecs[1] +=1
-#                         shouldSpotdoge = 1
-#                         print("TechRight")
+
+
+        if(ai_state.action == enums.Action.NEUTRAL_TECH):
+            if ai_state.action_frame == 1:
+                recorder.currentPercent = ai_state.percent
+                recorder.numtecs[2] +=1
+                recorder.shouldSpotdoge = 2
+                print("Neutral Tech\n")
+                print(recorder.numtecs)
+        if(ai_state.action == enums.Action.FORWARD_TECH):
+            if ai_state.facing:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[1] +=1
+                    recorder.shouldSpotdoge = 1
+                    print("TechRight")
+            else:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[0] +=1
+                    recorder.shouldSpotdoge = 0
+                    print("TechLeft")
+        if(ai_state.action == enums.Action.BACKWARD_TECH):
+            if ai_state.facing:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[0] +=1
+                    recorder.shouldSpotdoge = 0
+                    print("TechLeft")
+            else:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[1] +=1
+                    recorder.shouldSpotdoge = 1
+                    print("TechRight")
 
         
         

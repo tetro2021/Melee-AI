@@ -72,6 +72,10 @@ def signal_handler(sig, frame):
         print("") #because the ^C will be on the terminal
         print("Log file created: " + log.filename)
     print("Shutting down cleanly...")
+    print("Number of techs: ")
+    print(numtecs)
+    print("number of Success: ")
+    print(numsuccess)
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -103,6 +107,7 @@ inTech = False
 teching = True
 shouldSpotdoge = 3
 currentPercent = -1
+rec = RecordStates(numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent)
 # Main loop
 while True:
     # "step" to the next frame
@@ -136,89 +141,8 @@ while True:
             
 
             #Tracker for important variables
+            rec.recordTech(ai_state,controller,player_state)
             
-            if shouldSpotdoge == 0:
-                if ai_state.action != enums.Action.SPOTDODGE:
-                    if currentPercent == ai_state.percent:
-                        controller.press_button(enums.Button.BUTTON_L)
-                        controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
-                    else:
-                        shouldSpotdoge = 3
-                        print("\nFAILURE TECHLEFT!!!!\n\n")
-                elif ai_state.action_frame > 2:
-                    shouldSpotdoge = 3
-                    print("Sucsess")
-                    numsuccess[0] += 1
-            elif shouldSpotdoge == 1:
-                if ai_state.action != enums.Action.SPOTDODGE:
-                    if currentPercent == ai_state.percent:
-                        controller.press_button(enums.Button.BUTTON_L)
-                        controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
-                    else:
-                        shouldSpotdoge = 3
-                        print("\nFAILURE TECHRIGHT!!!!\n\n")
-                elif ai_state.action_frame > 2:
-                    shouldSpotdoge = 3
-                    print("Sucsess")
-                    numsuccess[1] += 1
-            elif shouldSpotdoge == 2:
-                if ai_state.action != enums.Action.SPOTDODGE:
-                    if currentPercent == ai_state.percent:
-                        controller.press_button(enums.Button.BUTTON_L)
-                        controller.tilt_analog(enums.Button.BUTTON_C, 0.5,0)
-                    else:
-                        shouldSpotdoge = 3
-                        print("\nFAILURE TECHNORMAL!!!!\n\n")
-                elif ai_state.action_frame > 2:
-                    shouldSpotdoge = 3
-                    print("Sucsess")
-                    numsuccess[2] += 1
-            else:
-                teching = SimpleTech(ai_state, controller, numtecs, numsuccess)
-                # if not teching:
-                #     simpleFoxAI(ai_state, controller, player_state)
-
-
-
-
-
-            if(ai_state.action == enums.Action.NEUTRAL_TECH):
-                if ai_state.action_frame == 1:
-                    currentPercent = ai_state.percent
-                    numtecs[2] +=1
-                    shouldSpotdoge = 2
-                    print("Neutral Tech\n")
-                    print(numtecs)
-            if(ai_state.action == enums.Action.FORWARD_TECH):
-                if ai_state.facing:
-                    if ai_state.action_frame == 1:
-                        currentPercent = ai_state.percent
-                        numtecs[1] +=1
-                        shouldSpotdoge = 1
-                        print("TechRight")
-                else:
-                    if ai_state.action_frame == 1:
-                        currentPercent = ai_state.percent
-                        numtecs[0] +=1
-                        shouldSpotdoge = 0
-                        print("TechLeft")
-            if(ai_state.action == enums.Action.BACKWARD_TECH):
-                if ai_state.facing:
-                    if ai_state.action_frame == 1:
-                        currentPercent = ai_state.percent
-                        numtecs[0] +=1
-                        shouldSpotdoge = 0
-                        print("TechLeft")
-                else:
-                    if ai_state.action_frame == 1:
-                        currentPercent = ai_state.percent
-                        numtecs[1] +=1
-                        shouldSpotdoge = 1
-                        print("TechRight")
-            
-            # teching = SimpleTech(ai_state, controller)
-            # if not teching:
-            #     simpleFoxAI(ai_state, controller, player_state)
               
                 
                 
