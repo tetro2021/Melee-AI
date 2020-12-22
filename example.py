@@ -72,6 +72,14 @@ def signal_handler(sig, frame):
         print("") #because the ^C will be on the terminal
         print("Log file created: " + log.filename)
     print("Shutting down cleanly...")
+    print("Number of techs: ")
+    print(numtecs)
+    print("number of Success: ")
+    print(numsuccess)
+    print("number of failures")
+    print(numtecs[0] - numsuccess[0])
+    print(numtecs[1] - numsuccess[1])
+    print(numtecs[2] - numsuccess[2])
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -97,8 +105,14 @@ if not controller.connect():
 print("Controller connected")
 print("Player Port: " + str(args.opponent))
 costume = 0
-stagePositiony = 16.1
-wasInAir = True
+numtecs = [0.0,0.0,0.0] #Left, Right, Normal respectively
+numsuccess = [0.0,0.0,0.0]
+totalTechs = 0
+inTech = False
+teching = True
+shouldSpotdoge = 3
+currentPercent = -1
+rec = RecordStates(numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent)
 # Main loop
 while True:
     # "step" to the next frame
@@ -132,36 +146,9 @@ while True:
             
 
             #Tracker for important variables
-            # if stagePositiony != ai_state.y:
-            #     #stageChanged = True
-            #     print("Stage pos changed" + str(ai_state.y))
-            #     stagePosition = ai_state.y
+            rec.recordTech(ai_state,controller,player_state)
             
-            #if not ai_state.on_ground:
-                #wasOffGround = True
-            # if ai_state.action == enums.Action.THROWN_FORWARD:
-            #     if ai_state.action_frame == 1:
-            #         print("here")
-            #         controller.release_all()
-            #     else:
-            #         print("Can you tech it?   " + str(canTech))
-            #         controller.press_button(enums.Button.BUTTON_L)
-
-            
-            #simpleFoxAI(ai_state, controller, player_state)
-            
-            # if ai_state.action == enums.Action.GRABBED:
-            #     print("Got grabbed")
-
-            # if ai_state.action == enums.Action.THROWN_UP:
-            #     print("Got grabbed")
-
-            # if ai_state.action == enums.Action.THROWN_BACK:
-            #     print("Got grabbed")
-            simpleFoxAI(ai_state, controller, player_state)
-            #SimpleTech(ai_state, controller)
               
-            #print(ai_state.action)
                 
                 
 
