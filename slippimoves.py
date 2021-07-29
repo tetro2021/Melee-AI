@@ -57,7 +57,7 @@ def SDIDownLeft(ai_state, controller):
     #     if controller.current.main_stick != (0,0):
     #         #print("got here")
     #         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0, 0)
-    if ai_state.hitlag:
+    if ai_state.hitlag_left:
         if (controller.current.main_stick != (0,0)):
             #controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0, 0)
@@ -75,7 +75,7 @@ def SDIDownRight(ai_state, controller):
     #     if controller.current.main_stick != (0,0):
     #         #print("got here")
     #         controller.tilt_analog(enums.Button.BUTTON_MAIN, 1, 0)
-    if ai_state.hitlag:
+    if ai_state.hitlag_left:
         if (controller.current.main_stick != (1,0)):
             #controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 1, 0)
@@ -97,7 +97,7 @@ def faceOpponent(ai_state, controller, player_state):
             print("Facing left flip right")
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.6,0.5)
         else:
-            controller.release_all()
+            controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0.5)
 
 
 
@@ -150,7 +150,7 @@ def PoorlyMadeTechplacement(ai_state, controller, stagePositiony):
 
 
 def SimpleTech(ai_state, controller, numtecs, numsuccess):
-    if (ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and not ai_state.hitlag and (ai_state.speed_y_self + ai_state.speed_y_attack) < -0.01):
+    if (ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and not ai_state.hitlag_left and (ai_state.speed_y_self + ai_state.speed_y_attack) < -0.01):
         controller.release_all()
         x = randomizeProbability(numtecs, numsuccess)
         #print(x)
@@ -187,29 +187,42 @@ options = {0 : TechLeft,
 
 
 
-def randomizeProbability(numtecs, numsuccess):
+
+
+
+
+def SuccessOverTotalCalc(numtecs, numsuccess):
     leftProb = 0.3333
     rightProb = 0.3333
     normProb = 0.3333
-    if numsuccess[0] != 0 and numsuccess[0] < numtecs[0]:
-        leftProb = numsuccess[0] / (numtecs[0] - numsuccess[0])
-        #print("Left Prob is: " + str(leftProb))
-    if numsuccess[1] != 0 and numsuccess[1] < numtecs[1]:
-        rightProb = numsuccess[1] / (numtecs[1] - numsuccess[1])
-    if numsuccess[2] != 0 and numsuccess[2] < numtecs[2]:
-        normProb = numsuccess[2] / (numtecs[2] - numsuccess[2])
+    if numsuccess[0] != 0: #and numsuccess[0] < numtecs[0]:
+        #leftProb = numsuccess[0] / 1+(numtecs[0] - numsuccess[0])
+        leftProb *= numsuccess[0] / numtecs[0]
+    if numsuccess[1] != 0: #and numsuccess[1] < numtecs[1]:
+        #rightProb = numsuccess[1] / 1+(numtecs[1] - numsuccess[1])
+        rightProb *= numsuccess[1] / numtecs[1]
+    if numsuccess[2] != 0: #and numsuccess[2] < numtecs[2]:
+        # = numsuccess[2] / 1+(numtecs[2] - numsuccess[2])
+        normProb *= numsuccess[2] / numtecs[2]
     sum = leftProb + rightProb + normProb
-    if leftProb/sum < 0.2:
-        leftProb = leftProb*1.1
-        #sum = lefProb + rightProb + normProb
-    if rightProb/sum < 0.2:
-        rightProb = rightProb*1.1
-        #sum = lefProb + rightProb + normProb
-    if normProb/sum < 0.2:
-        normProb = normProb*1.1
+    # if leftProb/sum < 0.2:
+    #     leftProb = leftProb*1.1
+    #     #sum = lefProb + rightProb + normProb
+    # if rightProb/sum < 0.2:
+    #     rightProb = rightProb*1.1
+    #     #sum = lefProb + rightProb + normProb
+    # if normProb/sum < 0.2:
+    #     normProb = normProb*1.1
     
     sum = leftProb + rightProb + normProb
     probarray = [leftProb/sum, rightProb/sum, normProb/sum]
+    return probarray
+
+
+
+
+def randomizeProbability(numtecs, numsuccess):
+    probarray = SuccessOverTotalCalc(numtecs, numsuccess)
     #print(probarray)
     x = np.random.choice(3,p=probarray)
     print(probarray)
@@ -224,6 +237,7 @@ class RecordStates:
     def __init__ (recorder, numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent):
         recorder.numtecs = numtecs
         recorder.numsuccess = numsuccess
+        recorder.totalTechs = 0
         recorder.inTech = inTech
         recorder.teching = teching
         recorder.shouldSpotdoge = shouldSpotdoge
@@ -268,8 +282,12 @@ class RecordStates:
                 recorder.numsuccess[2] += 1
         else:
             recorder.teching = SimpleTech(ai_state, controller, recorder.numtecs, recorder.numsuccess)
-            #if not recorder.teching:
-                #simpleFoxAI(ai_state, controller, player_state)
+            if recorder.teching:
+                recorder.totalTechs += 1
+                print("Total Techs: ")
+                print(recorder.totalTechs)
+            if not recorder.teching:
+                simpleFoxAI(ai_state, controller, player_state)
 
 
 

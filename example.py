@@ -76,10 +76,14 @@ def signal_handler(sig, frame):
     print(numtecs)
     print("number of Success: ")
     print(numsuccess)
-    print("number of failures")
-    print(numtecs[0] - numsuccess[0])
-    print(numtecs[1] - numsuccess[1])
-    print(numtecs[2] - numsuccess[2])
+    print("number of failures: ")
+    print( (numtecs[0] - numsuccess[0]),  " ", (numtecs[1] - numsuccess[1]), " ", (numtecs[2] - numsuccess[2]))
+    print("Final Tech Calculation:")
+    finalTech = SuccessOverTotalCalc(numtecs,numsuccess)
+    #This varible is created for saving to file for access on separate attemps
+    #It could be possible on a server to keep record of percantage successs of different players
+    print(finalTech)
+    print("Chance of moving left: ", finalTech[0], "of moving right: ", finalTech[1], "Chance of a normal tech", finalTech[2])
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -107,7 +111,6 @@ print("Player Port: " + str(args.opponent))
 costume = 0
 numtecs = [0.0,0.0,0.0] #Left, Right, Normal respectively
 numsuccess = [0.0,0.0,0.0]
-totalTechs = 0
 inTech = False
 teching = True
 shouldSpotdoge = 3
