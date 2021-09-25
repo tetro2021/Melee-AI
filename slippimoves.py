@@ -24,7 +24,7 @@ def shortHopLaser(ai_state, controller):
 
 
 def SDILeft(ai_state, controller):
-    if ai_state.hitstun_frames_left != 0:
+    if ai_state.hitlag_left:
         if (controller.current.main_stick != (0,0.5)):
             controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0, 0.5)
@@ -33,60 +33,33 @@ def SDILeft(ai_state, controller):
             controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
             #print(controller.current.main_stick)
-    else:
-        controller.release_all()
+    #else:
+        #controller.release_all()
 
 
 def SDIRight(ai_state, controller):
-    if ai_state.hitstun_frames_left != 0:
+    if ai_state.hitlag_left:
         if (controller.current.main_stick != (1,0.5)):
             controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 1, 0.5)
-            #print(controller.current.main_stick)
         else:
             controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-            #print(controller.current.main_stick)
-    else:
-        controller.release_all()
 
 
 def SDIDownLeft(ai_state, controller):
-    # if ai_state.action == enums.Action.THROWN_UP:
-    #     #controller.release_all()
-    #     if controller.current.main_stick != (0,0):
-    #         #print("got here")
-    #         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0, 0)
-    if ai_state.hitlag:
+    if ai_state.hitlag_left:
         if (controller.current.main_stick != (0,0)):
-            #controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0, 0)
-            #print(controller.current.main_stick)
         else:
-            #controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-            #print(controller.current.main_stick)
-    else:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
 
 def SDIDownRight(ai_state, controller):
-    # if ai_state.action == enums.Action.THROWN_UP:
-    #     #controller.release_all()
-    #     if controller.current.main_stick != (0,0):
-    #         #print("got here")
-    #         controller.tilt_analog(enums.Button.BUTTON_MAIN, 1, 0)
-    if ai_state.hitlag:
+    if ai_state.hitlag_left:
         if (controller.current.main_stick != (1,0)):
-            #controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 1, 0)
-            #print(controller.current.main_stick)
         else:
-            #controller.release_all()
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-            #print(controller.current.main_stick)
-    else:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-
 
 def faceOpponent(ai_state, controller, player_state):
     if ai_state.on_ground:
@@ -97,7 +70,7 @@ def faceOpponent(ai_state, controller, player_state):
             print("Facing left flip right")
             controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.6,0.5)
         else:
-            controller.release_all()
+            controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0.5)
 
 
 
@@ -150,7 +123,7 @@ def PoorlyMadeTechplacement(ai_state, controller, stagePositiony):
 
 
 def SimpleTech(ai_state, controller, numtecs, numsuccess):
-    if (ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and not ai_state.hitlag and (ai_state.speed_y_self + ai_state.speed_y_attack) < -0.01):
+    if (ai_state.y < 0 and not ai_state.on_ground and not ai_state.off_stage and not ai_state.hitlag_left and (ai_state.speed_y_self + ai_state.speed_y_attack) < -0.01):
         controller.release_all()
         x = randomizeProbability(numtecs, numsuccess)
         #print(x)
@@ -160,7 +133,7 @@ def SimpleTech(ai_state, controller, numtecs, numsuccess):
         return True
     else:
         if ai_state.on_ground:
-            controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0.5)
+            #controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0.5)
             controller.release_all()
             return False
         controller.release_button(enums.Button.BUTTON_L)
@@ -187,29 +160,42 @@ options = {0 : TechLeft,
 
 
 
-def randomizeProbability(numtecs, numsuccess):
+
+
+
+
+def SuccessOverTotalCalc(numtecs, numsuccess):
     leftProb = 0.3333
     rightProb = 0.3333
     normProb = 0.3333
-    if numsuccess[0] != 0 and numsuccess[0] < numtecs[0]:
-        leftProb = numsuccess[0] / (numtecs[0] - numsuccess[0])
-        #print("Left Prob is: " + str(leftProb))
-    if numsuccess[1] != 0 and numsuccess[1] < numtecs[1]:
-        rightProb = numsuccess[1] / (numtecs[1] - numsuccess[1])
-    if numsuccess[2] != 0 and numsuccess[2] < numtecs[2]:
-        normProb = numsuccess[2] / (numtecs[2] - numsuccess[2])
+    if numsuccess[0] != 0: #and numsuccess[0] < numtecs[0]:
+        #leftProb = numsuccess[0] / 1+(numtecs[0] - numsuccess[0])
+        leftProb *= numsuccess[0] / numtecs[0]
+    if numsuccess[1] != 0: #and numsuccess[1] < numtecs[1]:
+        #rightProb = numsuccess[1] / 1+(numtecs[1] - numsuccess[1])
+        rightProb *= numsuccess[1] / numtecs[1]
+    if numsuccess[2] != 0: #and numsuccess[2] < numtecs[2]:
+        # = numsuccess[2] / 1+(numtecs[2] - numsuccess[2])
+        normProb *= numsuccess[2] / numtecs[2]
     sum = leftProb + rightProb + normProb
-    if leftProb/sum < 0.2:
-        leftProb = leftProb*1.1
-        #sum = lefProb + rightProb + normProb
-    if rightProb/sum < 0.2:
-        rightProb = rightProb*1.1
-        #sum = lefProb + rightProb + normProb
-    if normProb/sum < 0.2:
-        normProb = normProb*1.1
+    # if leftProb/sum < 0.2:
+    #     leftProb = leftProb*1.1
+    #     #sum = lefProb + rightProb + normProb
+    # if rightProb/sum < 0.2:
+    #     rightProb = rightProb*1.1
+    #     #sum = lefProb + rightProb + normProb
+    # if normProb/sum < 0.2:
+    #     normProb = normProb*1.1
     
     sum = leftProb + rightProb + normProb
     probarray = [leftProb/sum, rightProb/sum, normProb/sum]
+    return probarray
+
+
+
+
+def randomizeProbability(numtecs, numsuccess):
+    probarray = SuccessOverTotalCalc(numtecs, numsuccess)
     #print(probarray)
     x = np.random.choice(3,p=probarray)
     print(probarray)
@@ -224,6 +210,7 @@ class RecordStates:
     def __init__ (recorder, numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent):
         recorder.numtecs = numtecs
         recorder.numsuccess = numsuccess
+        recorder.totalTechs = 0
         recorder.inTech = inTech
         recorder.teching = teching
         recorder.shouldSpotdoge = shouldSpotdoge
@@ -268,8 +255,12 @@ class RecordStates:
                 recorder.numsuccess[2] += 1
         else:
             recorder.teching = SimpleTech(ai_state, controller, recorder.numtecs, recorder.numsuccess)
-            #if not recorder.teching:
-                #simpleFoxAI(ai_state, controller, player_state)
+            if recorder.teching:
+                #Uncomment for recording total attempted techs, it is currently a insanley high and not helpful number
+                #recorder.totalTechs += 1
+                print("Atempting to tech")
+            if not recorder.teching:
+                simpleFoxAI(ai_state, controller, player_state)
 
 
 
@@ -310,4 +301,101 @@ class RecordStates:
                     print("TechRight")
 
         
-        
+
+
+
+# This code could be simplified by switching shouldSpotdodge to general action
+#this is proven with the shine code
+
+    def recordTechShine(recorder, ai_state, controller, player_state):
+        if recorder.shouldSpotdoge == 0:
+            if ai_state.action != enums.Action.DOWN_B_GROUND_START:
+                if recorder.currentPercent == ai_state.percent:
+                    if ai_state.action == enums.Action.STANDING:
+                        controller.press_button(enums.Button.BUTTON_B)
+                        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0)
+                    else: 
+                        controller.release_all()
+                else:
+                    recorder.shouldSpotdoge = 3
+                    print("FAILURE TECHLEFT!!!!\n")
+            elif ai_state.action_frame > 2:
+                recorder.shouldSpotdoge = 3
+                print("Success\n")
+                recorder.numsuccess[0] += 1
+        elif recorder.shouldSpotdoge == 1:
+            if ai_state.action != enums.Action.DOWN_B_GROUND_START:
+                if recorder.currentPercent == ai_state.percent:
+                    if ai_state.action == enums.Action.STANDING:
+                        controller.press_button(enums.Button.BUTTON_B)
+                        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0)
+                    else: 
+                        controller.release_all()
+                else:
+                    recorder.shouldSpotdoge = 3
+                    print("FAILURE TECHRIGHT!!!!\n")
+            elif ai_state.action_frame > 2:
+                recorder.shouldSpotdoge = 3
+                print("Success\n")
+                recorder.numsuccess[1] += 1
+        elif recorder.shouldSpotdoge == 2:
+            if ai_state.action != enums.Action.DOWN_B_GROUND_START:
+                if recorder.currentPercent == ai_state.percent:
+                    if ai_state.action == enums.Action.STANDING:
+                        controller.press_button(enums.Button.BUTTON_B)
+                        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5,0)
+                    else: 
+                        controller.release_all()
+                else:
+                    recorder.shouldSpotdoge = 3
+                    print("FAILURE TECHNORMAL!!!!\n")
+            elif ai_state.action_frame > 2:
+                recorder.shouldSpotdoge = 3
+                print("Success\n")
+                recorder.numsuccess[2] += 1
+        else:
+            recorder.teching = SimpleTech(ai_state, controller, recorder.numtecs, recorder.numsuccess)
+            if recorder.teching:
+                #Uncomment for recording total attempted techs, it is currently a insanley high and not helpful number
+                #recorder.totalTechs += 1
+                print("Atempting to tech")
+            if not recorder.teching:
+                simpleFoxAI(ai_state, controller, player_state)
+
+
+
+
+
+        if(ai_state.action == enums.Action.NEUTRAL_TECH):
+            if ai_state.action_frame == 1:
+                recorder.currentPercent = ai_state.percent
+                recorder.numtecs[2] +=1
+                recorder.shouldSpotdoge = 2
+                print("Neutral Tech")
+                #print(recorder.numtecs)
+        if(ai_state.action == enums.Action.FORWARD_TECH):
+            if ai_state.facing:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[1] +=1
+                    recorder.shouldSpotdoge = 1
+                    print("TechRight")
+            else:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[0] +=1
+                    recorder.shouldSpotdoge = 0
+                    print("TechLeft")
+        if(ai_state.action == enums.Action.BACKWARD_TECH):
+            if ai_state.facing:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[0] +=1
+                    recorder.shouldSpotdoge = 0
+                    print("TechLeft")
+            else:
+                if ai_state.action_frame == 1:
+                    recorder.currentPercent = ai_state.percent
+                    recorder.numtecs[1] +=1
+                    recorder.shouldSpotdoge = 1
+                    print("TechRight")
