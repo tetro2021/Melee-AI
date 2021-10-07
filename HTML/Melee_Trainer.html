@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html> 
+    <head>
+        <link rel="stylesheet" type="text/css" href="CSS/style.css">
+        <meta charset="UTF-8">
+        <meta name="descrpition" content="A website to connect to a melee AI that helps train your tech chasing skill">
+        <meta name="authoer" contents="Ethan Kane">
+        <meta name="viewport" conent="width=device-width, initial-scale=1.0">
+        <title>Melee Trainer</title>
+    </head>
+
+    <body> 
+       <header>
+            
+            <img class = foxImage src="pngfind.com-shine-png-582761.png" alt="Fox Image">
+           
+            <h1> Melee Trainer</h1>
+
+            <p class= "ogDescription"> 
+                This website is a simple and in develpoment tool to help learn how to tech in melee with simple AI assistance
+                <br>
+                More information can be found in my <a href="https://github.com" target="_blank"> Replace this with my github page</a> 
+                or my <a href="https://github.com" target="_blank"> Replace this with my Website page</a>
+            </p>
+
+       </header>
+       
+       <main>
+        <hr>
+        <a href="testpage.html" target="_blank"> First test to link to another page</a>
+
+        <div id ="phpform">
+          <p>
+              <script src="meleeUserInfo1.js"></script>
+              Enter your slippi connect code here
+              <form onsubmit="submitSlippi(event)" id = "nameForm">
+                  <input name = "slippiName" id = "slippiInput">
+                  <button>Submit</button>
+              </form>
+              
+
+
+
+
+          </p>
+        </div>
+
+
+        <div id ="demo">
+          <hr>
+          Lets test a <button type="button" onclick="loadDoc()"> Button </button>
+        </div>
+        <script>
+            function loadDoc() {
+              const xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("demo").innerHTML =
+                  this.responseText;
+                }
+              };
+              xhttp.open("GET", "SlippiNameData.txt", true);
+              xhttp.send();
+            }
+            </script>
+
+
+
+       </main>
+       <footer>
+
+
+       </footer>
+
+
+       
+       
+        <!-- <h1>Melee Trainer</h1>
+        <p>You will need a couple simple things before facing this wonderful ai</p>
+        <p style="color: red; background-color:blue;"> Testing to see if this works</p> </p> -->
+    </body>
+
+</html>
