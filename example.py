@@ -3,6 +3,7 @@ import argparse
 import signal
 import sys
 import melee
+import socket
 from melee import enums
 from slippimoves import *
 
@@ -109,6 +110,8 @@ if not controller.connect():
 print("Controller connected")
 print("Player Port: " + str(args.opponent))
 costume = 0
+
+# Added info to pass back to php
 numtecs = [0.0,0.0,0.0] #Left, Right, Normal respectively
 numsuccess = [0.0,0.0,0.0]
 inTech = False
@@ -116,8 +119,27 @@ teching = True
 shouldSpotdoge = 3
 currentPercent = -1
 rec = RecordStates(numtecs, numsuccess, inTech, teching, shouldSpotdoge, currentPercent)
+
+# Socket to PHP file
+
+# s = socket.socket()
+# host = "127.0.0.1"
+# port = 12345
+# s.bind((host, port))
+
+# s.listen(5)
+
+
 # Main loop
 while True:
+
+    # Connect to PHP file
+    # c, addr = s.accept()
+    # data = c.recv(1024)
+    # if data:
+    #     c.close
+    #     sys.exit()
+
     # "step" to the next frame
     gamestate = console.step()
     if gamestate is None:

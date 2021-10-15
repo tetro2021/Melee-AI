@@ -359,8 +359,10 @@ class RecordStates:
                 #Uncomment for recording total attempted techs, it is currently a insanley high and not helpful number
                 #recorder.totalTechs += 1
                 print("Atempting to tech")
-            if not recorder.teching:
-                simpleFoxAI(ai_state, controller, player_state)
+            
+            # This is where other bot actions are implemented
+            #if not recorder.teching:
+               #simpleFoxAI(ai_state, controller, player_state)
 
 
 
